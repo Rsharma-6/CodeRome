@@ -45,7 +45,11 @@ function EditorPage() {
   const { roomId } = useParams();
 
   const socketRef = useRef(null);
+const outputRef = useRef("");
 
+useEffect(() => {
+  outputRef.current = output;
+}, [output]);
   // 🆕 Automatically open compiler window whenever new output arrives
   useEffect(() => {
     if (output) {
@@ -81,7 +85,15 @@ function EditorPage() {
             code: codeRef.current,
             socketId,
           });
-        }
+
+ if (outputRef.current) {
+      socketRef.current.emit("sync-output-single", {
+        socketId,
+        output: outputRef.current,
+        language: selectedLanguage,
+      });
+    }
+}
       );
 
       socketRef.current.on(ACTIONS.DISCONNECTED, ({ socketId, username }) => {
@@ -180,10 +192,10 @@ function EditorPage() {
         {/* Client panel */}
         <div className="col-md-2 bg-dark text-light d-flex flex-column">
           <img
-            src="/images/coderome.png"
+            src="/images/CodeRome.png"
             alt="Logo"
             className="img-fluid mx-auto"
-            style={{ maxWidth: "150px", marginTop: "-23px" }}
+            style={{ maxWidth: "170px", marginTop: "-23px" }}
           />
           <hr style={{ marginTop: "-2rem" }} />
 

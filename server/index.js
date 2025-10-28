@@ -75,22 +75,22 @@ io.on("connection", (socket) => {
   socket.on(ACTIONS.CODE_CHANGE, ({ roomId, code }) => {
     socket.in(roomId).emit(ACTIONS.CODE_CHANGE, { code });
   });
+
   // when new user join the room all the code which are there are also shows on that persons editor
   socket.on(ACTIONS.SYNC_CODE, ({ socketId, code }) => {
     io.to(socketId).emit(ACTIONS.CODE_CHANGE, { code });
   });
-  //  if (roomData[roomId]) {
-  //    socket.emit(ACTIONS.SYNC_OUTPUT, roomData[roomId]);
-  //  }
+
 
     // ✅ When someone compiles, send output to everyone else in the same room
   socket.on("sync-output", ({ roomId, output, language, triggeredBy }) => {
     console.log(`Output from ${triggeredBy} in room ${roomId}:`, output);
-        // Save the output in memory
-    // roomData[roomId] = { output, language, triggeredBy };
-    // console.log(roomData[roomId]);
     socket.to(roomId).emit("sync-output", { output, language, triggeredBy });
   });
+  
+socket.on("sync-output-single", ({ socketId, output, language }) => {
+  io.to(socketId).emit("sync-output", { output, language });
+});
 
   // leave room
   socket.on("disconnecting", () => {
