@@ -38,23 +38,21 @@ function EditorPage() {
   const [isCompileWindowOpen, setIsCompileWindowOpen] = useState(false);
   const [isCompiling, setIsCompiling] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState("python3");
-  const codeRef = useRef(null);
 
+  // 🆕 for resizing
+  const [compilerHeight, setCompilerHeight] = useState(250);
+  const [isResizing, setIsResizing] = useState(false);
+
+  const codeRef = useRef(null);
   const Location = useLocation();
   const navigate = useNavigate();
   const { roomId } = useParams();
 
   const socketRef = useRef(null);
-const outputRef = useRef("");
+  const outputRef = useRef("");
 
-useEffect(() => {
-  outputRef.current = output;
-}, [output]);
-  // 🆕 Automatically open compiler window whenever new output arrives
   useEffect(() => {
-    if (output) {
-      setIsCompileWindowOpen(true);
-    }
+    outputRef.current = output;
   }, [output]);
 
   useEffect(() => {
@@ -86,14 +84,14 @@ useEffect(() => {
             socketId,
           });
 
- if (outputRef.current) {
-      socketRef.current.emit("sync-output-single", {
-        socketId,
-        output: outputRef.current,
-        language: selectedLanguage,
-      });
-    }
-}
+          if (outputRef.current) {
+            socketRef.current.emit("sync-output-single", {
+              socketId,
+              output: outputRef.current,
+              language: selectedLanguage,
+            });
+          }
+        }
       );
 
       socketRef.current.on(ACTIONS.DISCONNECTED, ({ socketId, username }) => {
@@ -108,7 +106,7 @@ useEffect(() => {
           console.log("Received synced output:", output);
           setSelectedLanguage(language);
           setOutput(output);
-          setIsCompileWindowOpen(true); // 🆕 open compiler for all users
+          setIsCompileWindowOpen(true); // open compiler for all users
 
           if (triggeredBy && triggeredBy !== Location.state?.username) {
             toast(`${triggeredBy} ran the code.`, { icon: "💻" });
@@ -186,6 +184,25 @@ useEffect(() => {
     setIsCompileWindowOpen(!isCompileWindowOpen);
   };
 
+  // 🧩 Handle mouse drag to resize
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (!isResizing) return;
+      const newHeight = window.innerHeight - e.clientY;
+      setCompilerHeight(Math.min(Math.max(newHeight, 120), window.innerHeight * 0.9));
+    };
+
+    const stopResizing = () => setIsResizing(false);
+
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", stopResizing);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", stopResizing);
+    };
+  }, [isResizing]);
+
   return (
     <div className="container-fluid vh-100 d-flex flex-column">
       <div className="row flex-grow-1">
@@ -259,7 +276,7 @@ useEffect(() => {
         {isCompileWindowOpen ? "Close Compiler" : "Open Compiler"}
       </button>
 
-      {/* Compiler section */}
+      {/* 🧱 Compiler Section (Resizable) */}
       <div
         className={`bg-dark text-light p-3 ${
           isCompileWindowOpen ? "d-block" : "d-none"
@@ -269,12 +286,25 @@ useEffect(() => {
           bottom: 0,
           left: 0,
           right: 0,
-          height: isCompileWindowOpen ? "30vh" : "0",
-          transition: "height 0.3s ease-in-out",
+          height: `${compilerHeight}px`,
+          transition: isResizing ? "none" : "height 0.25s ease-in-out",
           overflowY: "auto",
           zIndex: 1040,
+          userSelect: isResizing ? "none" : "auto",
         }}
       >
+        {/* 🪄 Resize handle */}
+        <div
+          onMouseDown={() => setIsResizing(true)}
+          style={{
+            height: "6px",
+            cursor: "ns-resize",
+            background: "#766e6eff",
+            borderRadius: "3px",
+            marginBottom: "8px",
+          }}
+        />
+
         <div className="d-flex justify-content-between align-items-center mb-3">
           <h5 className="m-0">Compiler Output ({selectedLanguage})</h5>
           <div>
