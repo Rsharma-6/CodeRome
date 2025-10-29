@@ -1,52 +1,81 @@
-# CodeCast - Real-time Code Collaboration
+# 💻 CodeRome — Real-Time Collaborative Code Editor
 
-CodeCast is a real-time code collaboration web application that allows multiple users to collaborate on code in the same virtual room. It's built using the MERN (MongoDB, Express.js, React, Node.js) stack and Socket.IO for real-time communication.
+**CodeRome** is a real-time collaborative coding platform built with **React**, **Node.js**, and **Socket.IO**.  
+It allows multiple users to join a shared coding room, write code together, run it, and see synchronized outputs instantly — all in the browser.
 
-## Live Demo
+---
 
-You can try out CodeCast by visiting the [live demo](https://codecast-324z.onrender.com). Create or join a room and start collaborating with others in real time!
-### DEMO VIDEO
-https://github.com/Yadvendra016/CodeCast/assets/91756355/dadc9f09-ef24-4c73-aa43-223f7a817f9f
+## 🚀 Features
 
-## Features
+- ⚡ **Real-time collaboration:** All users in a room can edit code simultaneously and see changes instantly.  
+- 🔄 **Live code & output sync:** Both **code** and **compiler output** are synchronized across all users in the same room — everyone sees the same result after a compilation.  
+- 🔔 **User join/leave notifications:** When a user joins or leaves the room, all participants get instant on-screen notifications.  
+- 🆔 **Unique Room ID (UUID):** Each room is created with a unique **UUID**, ensuring every coding session is distinct and securely identified.  
+- 💬 **Room-based sessions:** Users can join existing rooms or create new ones for separate coding sessions.  
+- 🧑‍💻 **Multi-language support:** Run code in various languages using the **JDoodle API**
+- 🪶 **Modern and clean UI:** Built with React and Bootstrap for a smooth, dark-themed experience.
 
-- Create or join a virtual "room" by entering a room ID.
-- Set your username to identify yourself in the room.
-- Real-time code collaboration with other users in the same room.
-- Changes made by one user are instantly reflected on all connected clients.
-- Code highlighting and editor customization options.
+---
 
-## Technologies Used
+## 🛠️ Tech Stack
 
-- Express.js: Handling API requests.
-- React: Building the front-end interface.
-- Node.js: Running the server.
-- Socket.IO: Enabling real-time communication.
-- uuid: Generating unique room IDs.
-- CodeMirror: Providing the code editor.
+| Category | Technology |
+|-----------|-------------|
+| **Frontend** | React.js, Bootstrap |
+| **Backend** | Node.js, Express.js |
+| **Realtime** | Socket.IO |
+| **Compiler** | JDoodle API  |
+| **Code Editor** | CodeMirror Editor |
+| **Build Tool** | Vite |
+| **Version Control** | Git + GitHub |
 
-## Usage
+---
+## ⚙️ Installation & Setup
 
-1. Open the [CodeCast live demo](https://codecast-324z.onrender.com).
-2. Enter a Room ID or generate a new one.
-3. Set your username.
-4. Start collaborating with others in the same room.
+### 1. Clone the Repository
+```bash
+git clone https://github.com/<your-username>/CodeRome.git
+cd CodeRome
+```
 
-## Development
+### 2️. Install dependencies 
+# **Client**
+```bash
+cd client
+npm install
+```
 
-If you want to run CodeCast locally or contribute to its development, follow these steps:
+# **Server**
+```bash
+cd ../server
+npm install
+```
 
-1. Clone the repository:
+### 3️. Configure environment variables
 
-   ```bash
-   git clone https://github.com/yourusername/codecast.git
-   cd codecast
-   ```
-2. Install dependencies:
-   ```
-   npm install
-   ```
-3. Start the development server:
-   ```
-   npm start
-   ```
+Create a .env file inside the server directory and add the following:
+
+```bash
+PORT=5000
+JDoodle_ClientId=your_client_id
+JDoodle_ClientSecret=your_client_secret
+```
+
+## 4️. Start the servers
+
+Open two terminals and run:
+
+# 🧩 Terminal 1 — Backend
+```bash
+cd server
+npm start
+```
+# 💻 Terminal 2 — Frontend
+```bash
+cd client
+npm run dev
+```
+
+## Then open your browser and visit:
+👉 http://localhost:5173
+
