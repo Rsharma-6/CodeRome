@@ -34,18 +34,18 @@ It allows multiple users to join a shared coding room, write code together, run 
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/<your-username>/CodeRome.git
+git clone https://github.com/Rsharma-6/CodeRome
 cd CodeRome
 ```
 
 ### 2️. Install dependencies 
-# **Client**
+#### **Client**
 ```bash
 cd client
 npm install
 ```
 
-# **Server**
+#### **Server**
 ```bash
 cd ../server
 npm install
@@ -61,21 +61,54 @@ JDoodle_ClientId=your_client_id
 JDoodle_ClientSecret=your_client_secret
 ```
 
-## 4️. Start the servers
+### 4️. Start the servers
 
 Open two terminals and run:
 
-# 🧩 Terminal 1 — Backend
+#### 🧩 Terminal 1 — Backend
 ```bash
 cd server
 npm start
 ```
-# 💻 Terminal 2 — Frontend
+#### 💻 Terminal 2 — Frontend
 ```bash
 cd client
 npm run dev
 ```
 
-## Then open your browser and visit:
+#### Then open your browser and visit:
 👉 http://localhost:5173
 
+### How to Use
+
+1. Create or Join a Room
+
+ - On the home page, enter your name.
+
+ - Click Create Room to generate a new one (a UUID-based Room ID is created automatically).
+
+ - Share this Room ID with others to collaborate in real time.
+
+ - Alternatively, Join Room using an existing Room ID.
+
+2. Collaborate in Real Time
+
+ - Once inside, all participants see each other’s code instantly as they type.
+
+ - When a new user joins or leaves, all members get a toast notification.
+
+ - The code is synchronized across all users in real time.
+
+3. Run and Share Output
+
+ - Choose your preferred language (e.g. Python, C++, Java).
+
+ - Click Run Code to compile.
+
+ - The output is automatically sent and shown to everyone in the same room — fully synchronized.
+
+4. Copy Room ID / Leave Room
+
+ - Easily copy your Room ID for sharing.
+
+ - Leave the session with one click — other users get notified instantly
