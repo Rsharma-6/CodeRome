@@ -81,34 +81,22 @@ npm run dev
 
 ### How to Use
 
-1. Create or Join a Room
+1. **Create or Join a Room**
+   - On the home page, enter your name.
+   - Click **Create Room** to generate a new one (a UUID-based Room ID is created automatically).
+   - Share this Room ID with others to collaborate in real time.
+   - Alternatively, click **Join Room** using an existing Room ID.
 
- - On the home page, enter your name.
+2. **Collaborate in Real Time**
+   - Once inside, all participants see each other’s code instantly as they type.
+   - When a new user joins or leaves, all members get a toast notification.
+   - The code is synchronized across all users in real time.
 
- - Click Create Room to generate a new one (a UUID-based Room ID is created automatically).
+3. **Run and Share Output**
+   - Choose your preferred language (e.g., Python, C++, Java).
+   - Click **Run Code** to compile.
+   - The output is automatically sent and shown to everyone in the same room — fully synchronized.
 
- - Share this Room ID with others to collaborate in real time.
-
- - Alternatively, Join Room using an existing Room ID.
-
-2. Collaborate in Real Time
-
- - Once inside, all participants see each other’s code instantly as they type.
-
- - When a new user joins or leaves, all members get a toast notification.
-
- - The code is synchronized across all users in real time.
-
-3. Run and Share Output
-
- - Choose your preferred language (e.g. Python, C++, Java).
-
- - Click Run Code to compile.
-
- - The output is automatically sent and shown to everyone in the same room — fully synchronized.
-
-4. Copy Room ID / Leave Room
-
- - Easily copy your Room ID for sharing.
-
- - Leave the session with one click — other users get notified instantly
+4. **Copy Room ID / Leave Room**
+   - Easily copy your Room ID for sharing.
+   - Leave the session with one click — other users get notified instantly.
