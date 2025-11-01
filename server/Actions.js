@@ -7,6 +7,8 @@ const ACTIONS = {
   CODE_CHANGE: "conde-change",
   SYNC_CODE: "sync-code",
   LEAVE: "leave",
+  SYNC_OUTPUT: "sync-output",
+
 };
 
 module.exports = ACTIONS;

@@ -100,6 +100,7 @@ function EditorPage() {
           return prev.filter((client) => client.socketId !== socketId);
         });
       });
+      
       socketRef.current.on(
         ACTIONS.SYNC_OUTPUT,
         ({ output, language, triggeredBy }) => {
@@ -167,7 +168,7 @@ function EditorPage() {
       const errMsg = error.response?.data?.error || "An error occurred";
       setOutput(errMsg);
 
-      socketRef.current.emit(ACTIONS.SYNC_OUTPUT, {
+      socketRef.current.emit("sync-output", {
         roomId,
         output: errMsg,
         language: selectedLanguage,

@@ -24,6 +24,7 @@ function Home() {
 
     // redirect
     navigate(`/editor/${roomId}`, {
+      //passing username as state
       state: {
         username,
       },

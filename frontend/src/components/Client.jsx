@@ -6,6 +6,7 @@ function Client({ username, currentUser }) {
   const isMe = username === currentUser;
 
   return (
+    //to print the avatars of clients joined
     <div className="d-flex align-items-center mb-3">
       <Avatar name={username.toString()} size={50} round="14px" className="mr-3" />
       <span className="mx-2">

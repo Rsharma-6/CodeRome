@@ -8,8 +8,6 @@ const axios = require("axios");
 const server = http.createServer(app);
 require("dotenv").config();
 
-const roomData = {}; // 🧠 store latest output + language per room
-
 const languageConfig = {
   python3: { versionIndex: "3" },
   java: { versionIndex: "3" },
@@ -42,8 +40,8 @@ const io = new Server(server, {
   },
 });
 
-const userSocketMap = {};
-const getAllConnectedClients = (roomId) => {
+const userSocketMap = {}; // Store the mapping of socket.id to username
+const getAllConnectedClients = (roomId) => { //to get all users connected to roomId
   return Array.from(io.sockets.adapter.rooms.get(roomId) || []).map(
     (socketId) => {
       return {
@@ -54,14 +52,17 @@ const getAllConnectedClients = (roomId) => {
   );
 };
 
+// When a new client connects to the server through Socket.io
 io.on("connection", (socket) => {
-  // console.log('Socket connected', socket.id);
+
+  // The client sends roomId (which room to join) and username (who is joining)
   socket.on(ACTIONS.JOIN, ({ roomId, username }) => {
     userSocketMap[socket.id] = username;
     socket.join(roomId);
-    const clients = getAllConnectedClients(roomId);
+    const clients = getAllConnectedClients(roomId); 
 
-    // notify that new user join
+    // Notify all clients in the room 
+    //update the client list
     clients.forEach(({ socketId }) => {
       io.to(socketId).emit(ACTIONS.JOINED, {
         clients,
@@ -70,7 +71,7 @@ io.on("connection", (socket) => {
       });
     });
   });
-  
+
   // sync the code
   socket.on(ACTIONS.CODE_CHANGE, ({ roomId, code }) => {
     socket.in(roomId).emit(ACTIONS.CODE_CHANGE, { code });
@@ -81,19 +82,21 @@ io.on("connection", (socket) => {
     io.to(socketId).emit(ACTIONS.CODE_CHANGE, { code });
   });
 
-
-    // ✅ When someone compiles, send output to everyone else in the same room
-  socket.on("sync-output", ({ roomId, output, language, triggeredBy }) => {
-    console.log(`Output from ${triggeredBy} in room ${roomId}:`, output);
-    socket.to(roomId).emit("sync-output", { output, language, triggeredBy });
+  // ✅ When someone compiles, send output to everyone else in the same room
+  socket.on(ACTIONS.SYNC_OUTPUT, ({ roomId, output, language, triggeredBy }) => {
+    socket.to(roomId).emit(ACTIONS.SYNC_OUTPUT, { output, language, triggeredBy });
   });
-  
-socket.on("sync-output-single", ({ socketId, output, language }) => {
-  io.to(socketId).emit("sync-output", { output, language });
-});
 
-  // leave room
+
+  // when new user join the room all the code which are there are also shows on that persons editor
+  socket.on("sync-output-single", ({ socketId, output, language }) => {
+    io.to(socketId).emit(ACTIONS.SYNC_OUTPUT, { output, language });
+  });
+
+  // Notify all other clients in each room that this user is disconnecting
   socket.on("disconnecting", () => {
+  // Get all rooms this socket is currently part of
+  // `socket.rooms` is a Set, so we spread it into an array
     const rooms = [...socket.rooms];
     // leave all the room
     rooms.forEach((roomId) => {
@@ -108,6 +111,10 @@ socket.on("sync-output-single", ({ socketId, output, language }) => {
   });
 });
 
+
+// --------------------------------------------------------------
+// 🧠  REST API endpoint for code compilation (JDoodle integration)
+// --------------------------------------------------------------
 app.post("/compile", async (req, res) => {
   const { code, language } = req.body;
 
@@ -117,7 +124,7 @@ app.post("/compile", async (req, res) => {
       language: language,
       versionIndex: languageConfig[language].versionIndex,
       clientId: process.env.jDoodle_clientId,
-      clientSecret: process.env.kDoodle_clientSecret
+      clientSecret: process.env.kDoodle_clientSecret,
     });
 
     res.json(response.data);
