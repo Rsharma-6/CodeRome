@@ -72,6 +72,7 @@ function EditorPage() {
         username: Location.state?.username,
       });
 
+      //when new user joined the room
       socketRef.current.on(
         ACTIONS.JOINED,
         ({ clients, username, socketId }) => {
@@ -79,9 +80,16 @@ function EditorPage() {
             toast.success(`${username} joined the room.`);
           }
           setClients(clients);
+
+          //synced the code for new user
+          // socketRef.current.emit(ACTIONS.SYNC_CODE, {
+          //   code: codeRef.current,
+          //   socketId, //the socket id of new user, it is provided by server in JOINED event
+          // });
+
           socketRef.current.emit(ACTIONS.SYNC_CODE, {
-            code: codeRef.current,
             socketId,
+            roomId,
           });
 
           if (outputRef.current) {
@@ -100,7 +108,7 @@ function EditorPage() {
           return prev.filter((client) => client.socketId !== socketId);
         });
       });
-      
+
       socketRef.current.on(
         ACTIONS.SYNC_OUTPUT,
         ({ output, language, triggeredBy }) => {
@@ -143,6 +151,10 @@ function EditorPage() {
   };
 
   const runCode = async () => {
+  if (!codeRef.current.trim()) {
+    toast.error("⚠️ Please write some code before compiling!");
+    return; // stop execution
+  }
     setIsCompiling(true);
     const username = Location.state?.username || "Someone";
 
@@ -190,7 +202,9 @@ function EditorPage() {
     const handleMouseMove = (e) => {
       if (!isResizing) return;
       const newHeight = window.innerHeight - e.clientY;
-      setCompilerHeight(Math.min(Math.max(newHeight, 120), window.innerHeight * 0.9));
+      setCompilerHeight(
+        Math.min(Math.max(newHeight, 120), window.innerHeight * 0.9)
+      );
     };
 
     const stopResizing = () => setIsResizing(false);

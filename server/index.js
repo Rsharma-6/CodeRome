@@ -7,6 +7,7 @@ const cors = require("cors");
 const axios = require("axios");
 const server = http.createServer(app);
 require("dotenv").config();
+const docs = new Map(); // Map (or object) storing all document updates per room.
 
 const languageConfig = {
   python3: { versionIndex: "3" },
@@ -35,7 +36,7 @@ app.use(express.json());
 
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: process.env.CLIENT_URL,
     methods: ["GET", "POST"],
   },
 });
@@ -52,6 +53,7 @@ const getAllConnectedClients = (roomId) => { //to get all users connected to roo
   );
 };
 
+
 // When a new client connects to the server through Socket.io
 io.on("connection", (socket) => {
 
@@ -59,10 +61,10 @@ io.on("connection", (socket) => {
   socket.on(ACTIONS.JOIN, ({ roomId, username }) => {
     userSocketMap[socket.id] = username;
     socket.join(roomId);
+    //update the client list
     const clients = getAllConnectedClients(roomId); 
 
-    // Notify all clients in the room 
-    //update the client list
+    // Notify and trigger joined event to existing client
     clients.forEach(({ socketId }) => {
       io.to(socketId).emit(ACTIONS.JOINED, {
         clients,
@@ -72,14 +74,28 @@ io.on("connection", (socket) => {
     });
   });
 
+
   // sync the code
-  socket.on(ACTIONS.CODE_CHANGE, ({ roomId, code }) => {
-    socket.in(roomId).emit(ACTIONS.CODE_CHANGE, { code });
+  socket.on(ACTIONS.CODE_CHANGE, ({ roomId, update }) => {
+        // Merge incoming binary updates into room state
+    if (!docs.has(roomId)) docs.set(roomId, []);
+    docs.get(roomId).push(update);
+
+    // Broadcast to all other users in the same room
+    socket.to(roomId).emit(ACTIONS.CODE_CHANGE, { update });
+    //instead of emitting the code, we send only the chnages
+    // socket.in(roomId).emit(ACTIONS.CODE_CHANGE, { code });
   });
 
+
   // when new user join the room all the code which are there are also shows on that persons editor
-  socket.on(ACTIONS.SYNC_CODE, ({ socketId, code }) => {
-    io.to(socketId).emit(ACTIONS.CODE_CHANGE, { code });
+  socket.on(ACTIONS.SYNC_CODE, ({ socketId, roomId }) => {
+        const updates = docs.get(roomId) || [];
+    updates.forEach((update) => {
+    socket.to(socketId).emit(ACTIONS.CODE_CHANGE, { update });
+    });
+    //send each update of each room to the new user
+    // io.to(socketId).emit(ACTIONS.CODE_CHANGE, { code });
   });
 
   // ✅ When someone compiles, send output to everyone else in the same room
@@ -93,6 +109,7 @@ io.on("connection", (socket) => {
     io.to(socketId).emit(ACTIONS.SYNC_OUTPUT, { output, language });
   });
 
+  
   // Notify all other clients in each room that this user is disconnecting
   socket.on("disconnecting", () => {
   // Get all rooms this socket is currently part of
@@ -110,6 +127,8 @@ io.on("connection", (socket) => {
     socket.leave();
   });
 });
+
+
 
 
 // --------------------------------------------------------------
