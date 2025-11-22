@@ -7,7 +7,7 @@ It allows multiple users to join a shared coding room, write code together, run 
 
 ## 🚀 Features
 
-- ⚡ **Real-time collaboration:** All users in a room can edit code simultaneously and see changes instantly.  
+- ⚡ **Real-time collaboration with yjs:** All users in a room can edit code simultaneously, and Yjs uses CRDTs to merge changes instantly without conflicts.  
 - 🔄 **Live code & output sync:** Both **code** and **compiler output** are synchronized across all users in the same room — everyone sees the same result after a compilation.  
 - 🔔 **User join/leave notifications:** When a user joins or leaves the room, all participants get instant on-screen notifications.  
 - 🆔 **Unique Room ID (UUID):** Each room is created with a unique **UUID**, ensuring every coding session is distinct and securely identified.  
