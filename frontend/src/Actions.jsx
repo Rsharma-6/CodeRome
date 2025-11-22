@@ -8,5 +8,6 @@ export const ACTIONS = {
   SYNC_CODE: "sync-code",
   LEAVE: "leave",
   SYNC_OUTPUT: "sync-output",
+  ROOM_FULL : "room-full"
 
 };

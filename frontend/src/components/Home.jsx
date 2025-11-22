@@ -29,7 +29,7 @@ function Home() {
         username,
       },
     });
-    toast.success("room is created");
+
   };
 
   // when enter then also join

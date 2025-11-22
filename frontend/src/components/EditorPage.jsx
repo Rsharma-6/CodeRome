@@ -72,6 +72,16 @@ function EditorPage() {
         username: Location.state?.username,
       });
 
+      socketRef.current.on(ACTIONS.JOINED, ({ username }) => {
+        toast.success(`Joined the room successfully`);
+      });
+
+      // Listen for ROOM_FULL event
+      socketRef.current.on(ACTIONS.ROOM_FULL, ({ message }) => {
+        toast.error(message);
+        navigate("/");
+      });
+
       //when new user joined the room
       socketRef.current.on(
         ACTIONS.JOINED,
@@ -150,12 +160,21 @@ function EditorPage() {
     navigate("/");
   };
 
+  const [isCooldown, setIsCooldown] = useState(false);
+
   const runCode = async () => {
-  if (!codeRef.current.trim()) {
-    toast.error("⚠️ Please write some code before compiling!");
-    return; // stop execution
-  }
+    if (!codeRef.current.trim()) {
+      toast.error("⚠️ Please write some code before compiling!");
+      return;
+    }
+
+    if (isCooldown) {
+      toast.error("⏳ Please wait 30 seconds before running code again!");
+      return;
+    }
+
     setIsCompiling(true);
+    setIsCooldown(true); // start cooldown
     const username = Location.state?.username || "Someone";
 
     try {
@@ -187,9 +206,12 @@ function EditorPage() {
         triggeredBy: username,
       });
 
-      toast.error("Compilation failed!");
+      toast.error(errMsg);
     } finally {
       setIsCompiling(false);
+
+      // automatically reset cooldown after 30 seconds
+      setTimeout(() => setIsCooldown(false), 30000);
     }
   };
 
