@@ -90,7 +90,7 @@ io.on("connection", (socket) => {
 
     // Broadcast to all other users in the same room
     socket.to(roomId).emit(ACTIONS.CODE_CHANGE, { update });
-    //instead of emitting the code, we send only the chnages
+    //instead of emitting the code, we send only the changes
     // socket.in(roomId).emit(ACTIONS.CODE_CHANGE, { code });
   });
 
@@ -194,7 +194,9 @@ app.get("/rooms", (req, res) => {
 //----------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------
 
-
+app.get("/health", (req, res) => {
+  res.send("Backend is running!");
+});
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
